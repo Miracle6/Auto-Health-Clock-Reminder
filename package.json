@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "content-disposition": "^0.5.4",
+    "cron": "^2.1.0",
+    "express": "^4.18.1",
+    "node-xlsx": "^0.21.0",
+    "oicq": "^2.3.1",
+    "puppeteer": "^17.0.0",
+    "sync-request": "^6.1.0"
+  }
+}

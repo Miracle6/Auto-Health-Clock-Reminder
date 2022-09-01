@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="vue.js"></script>
+    <script type="text/javascript" src="html2canvas.js"></script>
+    <script type="text/javascript" src="canvas2image.js"></script>
+  </head>
+
+  <body>
+    <div id="app">
+      <div v-if="tableData" v-for="(value,key) in tableData">
+        <table v-if="tableData[key]" class="table_style" :id='"table"+key'>
+          <tr>
+            <td colspan="4">{{key}}届</td>
+          </tr>
+          <tr v-for="item in tableData[key]">
+            <td>{{item[1]}}</td>
+            <td>{{item[3]}}</td>
+            <td>{{item[4]}}</td>
+            <td>{{item[6]}}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+  <script>
+    var app = new Vue({
+      el: "#app",
+      data() {
+        return {
+          tableData: {},
+          time: "",
+          grade: "",
+        };
+      },
+      mounted() {
+        this.time = window.location.href.split(/[=&]/)[1];
+        this.grade = window.location.href.split(/[=&]/)[3];
+        this.getExcel(this.time, this.grade);
+      },
+      methods: {
+        //获取Excel数据
+        getExcel(time, grade) {
+          var that = this;
+          axios
+            .get("/excel", {
+              params: {
+                time: time,
+                grade: grade,
+              },
+            })
+            .then(function (response) {
+              console.log(response.data);
+              that.tableData = response.data;
+              that.$nextTick(() => {
+                if (grade == "all") {
+                  that.getCanvas("table2017");
+                  that.getCanvas("table2018");
+                  that.getCanvas("table2019");
+                  that.getCanvas("table2020");
+                  that.getCanvas("table2021");
+                } else {
+                  that.getCanvas("table" + grade);
+                }
+              });
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        },
+        //生成Canvas并转化为图片
+        getCanvas(id) {
+          var fileName = this.time + id;
+          console.log(fileName);
+          html2canvas(document.getElementById(id)).then(function (canvas) {
+            var canvasWidth = canvas.width;
+            var canvasHeight = canvas.height;
+            var img = Canvas2Image.convertToImage(
+              canvas,
+              canvasWidth,
+              canvasHeight
+            );
+            Canvas2Image.saveAsImage(
+              canvas,
+              canvasWidth,
+              canvasHeight,
+              "png",
+              fileName
+            );
+          });
+        },
+      },
+    });
+  </script>
+  <style>
+    .table_style {
+      width: 800px;
+      text-align: center;
+      font-size: 16px;
+      border-spacing: 0;
+      border-collapse: collapse;
+    }
+    td {
+      border: 1px solid #000000;
+      width: 200px;
+    }
+  </style>
+</html>
