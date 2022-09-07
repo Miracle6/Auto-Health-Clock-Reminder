@@ -46,3 +46,5 @@
 ### Tips
 
 设置定时格式，可以参考[Crontab.guru - The cron schedule expression editor](https://crontab.guru/#00_15_*_*_*)
+
+根据学院不同，可能还需改`getXls`方法里面的链接前缀 如：yjsxx 改 zhxg
